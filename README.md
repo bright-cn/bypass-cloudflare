@@ -1,6 +1,6 @@
 # 绕过 Cloudflare：最佳实践
 
-[![推广](https://github.com/luminati-io/LinkedIn-Scraper/raw/main/Proxies%20and%20scrapers%20GitHub%20bonus%20banner.png)](https://www.bright.cn/) 
+[![推广](https://github.com/bright-cn/LinkedIn-Scraper/raw/main/Proxies%20and%20scrapers%20GitHub%20bonus%20banner.png)](https://www.bright.cn/) 
 
 本指南将介绍如何绕过 Cloudflare 的安全机制，并成功抓取不会被阻止的网站。
 
