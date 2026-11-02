@@ -1,44 +1,44 @@
 # 绕过 Cloudflare：最佳实践
 
-[![推广](https://github.com/bright-cn/LinkedIn-Scraper/raw/main/Proxies%20and%20scrapers%20GitHub%20bonus%20banner.png)](https://www.bright.cn/) 
+[![促销](https://github.com/bright-cn/LinkedIn-Scraper/raw/main/Proxies%20and%20scrapers%20GitHub%20bonus%20banner.png)](https://www.bright.cn/) 
 
-本指南将介绍如何绕过 Cloudflare 的安全机制，并成功抓取不会被阻止的网站。
+本指南介绍如何绕过 Cloudflare 的安全机制，成功抓取网站而不被封禁。
 
 - [使用代理解决方案](#使用代理解决方案)
-- [伪造 HTTP 头](#伪造-http-头)
-- [实施 CAPTCHA 解决服务](#实施-captcha-解决服务)
-- [使用强化的无头浏览器](#使用强化的无头浏览器)
-- [使用 Cloudflare 解题工具](#使用-cloudflare-解题工具)
-- [高级技巧](#高级技巧)
-- [整合 Bright Data 解决方案](#整合-bright-data-解决方案)
+- [伪装 HTTP 标头](#伪装-http-标头)
+- [接入 CAPTCHA 破解服务](#接入-captcha-破解服务)
+- [使用强化型无头浏览器](#使用强化型无头浏览器)
+- [使用 Cloudflare 破解工具](#使用-cloudflare-破解工具)
+- [高级技术](#高级技术)
+- [集成 Bright Data 解决方案](#集成-bright-data-解决方案)
 
 ## 了解 Cloudflare 的机制
 
-Cloudflare 的[Web应用防火墙（WAF）](https://www.cloudflare.com/application-services/products/waf/)通过其全球网络来保护 Web 应用免受 DDoS 和零日攻击。它能实时阻止攻击，并利用专有算法，根据多种特征来识别并阻止恶意机器人，包括：
+Cloudflare 的[网页应用防火墙](https://www.cloudflare.com/application-services/products/waf/) (WAF) 可保护 Web 应用免受 DDoS 和零日攻击。它在 Cloudflare 的全球网络上运行，能够实时阻止攻击，并使用专有算法根据以下多种特征识别和拦截恶意爬虫：
 
-- [**TLS 指纹**](https://www.bright.cn/blog/web-data/tls-fingerprinting)：JA3 指纹用来识别客户端及其功能、配置，以验证客户端是否是真实用户。
-- **[HTTP/2 指纹](https://www.blackhat.com/docs/eu-17/materials/eu-17-Shuster-Passive-Fingerprinting-Of-HTTP2-Clients-wp.pdf)**：利用 HTTP/2 参数与已知的机器人特征进行匹配。
-- **HTTP 细节**：检查头部信息和 Cookie 以识别疑似机器人的配置。
-- **JavaScript 指纹**：收集浏览器、操作系统和硬件信息，以区分机器人与真实用户。
-- **行为分析**：通过机器学习监测请求频率、鼠标移动、空闲时间等来检测机器人。
+- [**TLS 指纹**](https://www.bright.cn/blog/web-data/tls-fingerprinting)：JA3 指纹可识别客户端及其功能和配置，并验证客户端是否真实。
+- **[HTTP/2 指纹](https://www.blackhat.com/docs/eu-17/materials/eu-17-Shuster-Passive-Fingerprinting-Of-HTTP2-Clients-wp.pdf)**：使用 HTTP/2 参数与已知的爬虫签名进行匹配。
+- **HTTP 详细信息**：检查标头和 Cookie 中是否存在类似爬虫的配置。
+- **JavaScript 指纹**：收集浏览器、操作系统和硬件详细信息，以区分爬虫。
+- **行为分析**：通过机器学习监控请求频率、鼠标移动和空闲时间，以检测爬虫。
 
-一旦 Cloudflare 检测到可疑的机器人活动，就会发起背景 JavaScript 挑战；若无法通过则会要求输入 CAPTCHA。
+如果检测到类似爬虫的活动，Cloudflare 会在后台发起 JavaScript 质询；若未能通过，则会显示 CAPTCHA。
 
-## 绕过 Cloudflare 的技巧
+## 绕过 Cloudflare 的技术
 
-Cloudflare 的专有机器人检测并非牢不可破，具体解决方案需要结合自身需求来不断试验和优化。
+Cloudflare 的专有爬虫检测并非万无一失，因此你需要进行尝试，找到最适合自身需求的方法。
 
 ### 使用代理解决方案
 
-Cloudflare 会根据同一 IP 发送过多请求来识别并阻止机器人。为避免这一点，可以使用[优质住宅代理](https://www.bright.cn/proxy-types/residential-proxies)。但如果对方还会检测 User-Agent，则需要进行相应的伪造。
+Cloudflare 会将来自单个 IP 的过多请求标记为爬虫活动。要避免这种情况，请使用[优质住宅代理](https://www.bright.cn/proxy-types/residential-proxies)。不过，如果启用了 User-Agent 检查，你还需要伪装 User-Agent。
 
-### 伪造 HTTP 头
+### 伪装 HTTP 标头
 
-[HTTP 头](https://www.bright.cn/blog/web-data/http-headers-for-web-scraping)可以暴露客户端的详细信息。Cloudflare 会利用它们来区分真实浏览器和只发送少数头部信息的爬虫。大多数爬虫工具都允许你修改头部来模拟真实浏览器。常见的头部包括：
+[HTTP 标头](https://www.bright.cn/blog/web-data/http-headers-for-web-scraping)会暴露客户端的详细信息。Cloudflare 会检查这些信息，以区分发送大量标头的真实浏览器与仅发送少量标头的抓取工具。大多数爬虫工具都允许你修改标头，以模拟真实浏览器。常见标头包括：
 
-#### User-Agent 头
+#### User-Agent 标头
 
-`User-Agent` 头会暴露所用浏览器与操作系统。Cloudflare 可能会阻止明显像机器人的 User-Agent，因此可将其伪装成常用浏览器（如 Chrome、Firefox、Safari）来提高成功率。下面是使用 Python [`requests` 库](https://pypi.org/project/requests/)进行设置的示例：
+`User-Agent` 标头会暴露浏览器和操作系统。Cloudflare 可能会拦截类似爬虫的 User-Agent，因此将其伪装成真实浏览器（例如 Chrome、Firefox 或 Safari）有助于避免被检测。例如，在 Python 的 [`requests` 库](https://pypi.org/project/requests/)中，你可以这样设置：
 
 ```python
 import requests
@@ -53,9 +53,9 @@ print(response.status_code)
 print(response.text)
 ```
 
-#### Referer 头
+#### Referrer 标头
 
-Cloudflare 会检查 `Referer` 头来验证请求的来源。将其伪造为一个可信的 URL，能使请求看起来更可信。
+Cloudflare 会检查 `Referer` 标头以验证请求来源。使用有效 URL 对其进行伪装，可以让请求看起来可信。
 
 ```python
 import requests
@@ -70,9 +70,9 @@ print(response.status_code)
 print(response.text)
 ```
 
-#### Accept 头
+#### Accept 标头
 
-`Accept` 头用于声明客户端可处理的内容类型。模拟真实浏览器中详细的 `Accept` 头，可帮助避免被识别为机器人：
+`Accept` 标头用于指定客户端可以处理哪些内容类型。模拟真实浏览器中详细的 `Accept` 标头有助于避免被检测：
 
 ```python
 import requests
@@ -87,15 +87,15 @@ print(response.status_code)
 print(response.text)
 ```
 
-Cloudflare 也会检查头部的不匹配或是否过时。例如，如果你使用的是 Firefox 的 User-Agent，但包含 `Sec-CH-UA-Full-Version-List` 头，可能会被阻断，因为 Firefox 并不支持该头部。
+Cloudflare 还会检查标头是否不匹配或已过时。例如，将 Firefox User-Agent 与 `Sec-CH-UA-Full-Version-List` 搭配使用可能会导致请求被拦截，因为 Firefox 不支持它。
 
-### 实施 CAPTCHA 解决服务
+### 接入 CAPTCHA 破解服务
 
-当其他检测手段都无法确定客户端是否可信时，Cloudflare 可能会向可疑客户端展示 CAPTCHA。它的 Turnstile 系统通常提供轻量级的无交互挑战，但在必要时也会切换为需人工输入的交互式 CAPTCHA。很多服务使用真人或其他方式来解决这些验证码。可参阅我们的[最佳 CAPTCHA 解决方案](https://www.bright.cn/blog/web-data/best-captcha-solvers)文章，筛选最适合自己的服务。 
+当其他检测方法无法得出明确结果时，Cloudflare 可能会向可疑客户端显示 CAPTCHA。其 Turnstile 系统会运行轻量级的非交互式质询，但也可以切换为对爬虫工具发起挑战的交互式 CAPTCHA。此外，许多服务还会使用人工破解方式绕过这些 CAPTCHA。阅读我们关于[最佳验证码破解工具]( https://www.bright.cn/blog/web-data/best-captcha-solvers)的文章，为你的使用场景找到理想的服务。 
 
-### 使用强化的无头浏览器
+### 使用强化型无头浏览器
 
-如果想绕过 Cloudflare 的 JavaScript 挑战，你的爬虫必须模拟真实浏览器：执行 JavaScript、处理 Cookie、模拟用户滚动、鼠标移动和点击等操作。[Selenium](https://www.selenium.dev/) 等工具能完成这些，但许多[无头浏览器](https://www.bright.cn/blog/web-data/best-headless-browsers)本身也会暴露特征（例如 `navigator.webdriver`）。你可以使用 [undetected_chromedriver](https://github.com/ultrafunkamsterdam/undetected-chromedriver)、[puppeteer-extra-plugin-stealth](https://www.bright.cn/blog/how-tos/avoid-getting-blocked-with-puppeteer-stealth) 等插件来隐藏这些特征。
+要绕过 Cloudflare 的 JavaScript 质询，你的爬虫必须模拟真实浏览器行为，包括执行 JavaScript、处理 Cookie，以及模拟滚动、鼠标移动和点击等操作。[Selenium](https://www.selenium.dev/) 等工具可以实现这些功能，但[无头浏览器](https://www.bright.cn/blog/web-data/best-headless-browsers)往往会暴露自身特征（例如通过 `navigator.webdriver`）。[undetected_chromedriver](https://github.com/ultrafunkamsterdam/undetected-chromedriver) 和 [puppeteer-extra-plugin-stealth](https://www.bright.cn/blog/how-tos/avoid-getting-blocked-with-puppeteer-stealth) 等插件有助于掩盖这些特征。
 
 以下是使用 undetected_chromedriver 的示例：
 
@@ -106,7 +106,7 @@ with driver:
     driver.get('https://example.com')
 ```
 
-你也可以将无头浏览器与[高质量代理服务](https://www.bright.cn/proxy-types)结合使用，以加强对 Cloudflare 的规避能力：
+你可以将无头浏览器与[高质量代理服务](https://www.bright.cn/proxy-types)搭配使用，使其更能抵御 Cloudflare 的检测：
 
 ```python
 chrome_options = uc.ChromeOptions()
@@ -124,22 +124,23 @@ driver = uc.Chrome(
 )
 ```
 
-浏览器频繁更新会带来新的无头检测特征，而 Cloudflare 的算法也在不断进化，可能利用这些新特征。因此，这些反侦察插件需持续维护，否则很容易失效。
+浏览器经常更新，这可能会暴露无头浏览器的特征，而 Cloudflare 不断演进的算法可以利用这些特征。因此，必须定期维护插件，否则它们可能会失效。
 
-### 使用 Cloudflare 解题工具
+### 使用 Cloudflare 破解工具
 
-专门的 [Cloudflare 解题服务](https://github.com/bright-cn/cloudflare-captcha-solver)可以在短期内绕过一些基本防护。例如，cloudscraper 通过 JavaScript 引擎来模拟浏览器功能，但其更新往往滞后，因此效果会受影响。
+专用的 [Cloudflare 破解服务](https://github.com/bright-cn/cloudflare-captcha-solver)可以暂时绕过基础保护。例如，cloudscraper 使用 JavaScript 引擎模拟浏览器支持，但由于其更新不及时，实际效果可能有所下降。
 
-### 高级技巧
+### 高级技术
 
-Cloudflare 会结合多种识别手段，因此单一手段往往不足以完全绕过。建议综合多种方法来最大化模拟真实用户行为。例如，使用强化的无头浏览器、模拟真实的鼠标移动（如利用[B-spline 曲线](https://stackoverflow.com/a/48690652)）、轮换住宅代理以避免 IP 封禁，并使用像 [Hazetunnel](https://github.com/daijro/hazetunnel) 这样的工具来模仿真实浏览器指纹。再结合 CAPTCHA 解决方案，能显著提高绕过 Cloudflare 检测的成功率。
+Cloudflare 使用多种爬虫检测方法，因此单一技术并不足以绕过检测。你需要组合多种方法来模拟真实用户。例如，使用强化型无头浏览器、模拟人类鼠标移动（如 [B 样条曲线](https://stackoverflow.com/a/48690652)）、轮换住宅代理以避免 IP 被封禁，并使用 [Hazetunnel](https://github.com/daijro/hazetunnel) 等工具复现真实浏览器指纹。再加入 CAPTCHA 破解工具，可以进一步提高绕过 Cloudflare 防御机制的成功率。
 
-## 整合 Bright Data 解决方案
+## 集成 Bright Data 解决方案
 
-[Bright Data 的 Web Unlocker](https://github.com/bright-cn/web-unlocker-api) 借助 AI 技术来自动应对 Cloudflare 的反爬机制（涵盖浏览器指纹、CAPTCHA 解决、IP 轮换、请求重试等），成功率高达 99.99%。它会自动选择最佳代理，使用方式与标准代理服务器类似，只需简单的身份验证即可。使用方式示例如下：
+[Bright Data 的网络解锁器](https://github.com/bright-cn/web-unlocker-api)利用 AI 应对反爬虫措施（例如浏览器指纹识别、验证码破解、IP 轮换和请求重试），成功率高达 99.99%，从而简化绕过 Cloudflare 爬虫检测的过程。它会自动选择最佳代理并提供简单的身份验证凭据，让你能够像使用任何标准代理服务器一样使用它。你可以像使用其他代理服务器一样使用它：
 
 ```python
 import requests
+
 
 host = 'brd.superproxy.io'
 port = 22225
@@ -154,13 +155,14 @@ proxies = {
     'https': proxy_url
 }
 
+
 url = "http://lumtest.com/myip.json"
 response = requests.get(url, proxies=proxies)
 print(response.json())
 ```
 
-[Bright Data 的 Scraping Browser](https://github.com/bright-cn/scraping-browser) 则直接在远程浏览器中运行你的代码，并结合多重代理来解锁站点。它可以与 [Puppeteer](https://www.bright.cn/products/scraping-browser/puppeteer)、[Selenium](https://www.bright.cn/products/scraping-browser/selenium) 和 [Playwright](https://www.bright.cn/products/scraping-browser/playwright) 集成，提供完整的无头浏览器环境。
+[Bright Data 的抓取浏览器](https://github.com/luminati-io/scraping-browser)通过在远程浏览器上运行你的代码来绕过 Cloudflare，该浏览器会使用多个代理解锁网站。它可与 [Puppeteer](https://www.bright.cn/products/scraping-browser/puppeteer)、[Selenium](https://www.bright.cn/products/scraping-browser/selenium) 和 [Playwright](https://www.bright.cn/products/scraping-browser/playwright) 集成，提供完整的无头浏览器体验。
 
-## 结论
+## 总结
 
-绕过 Cloudflare 可能较为复杂，且成功率会因策略不同而差异明显。与其尝试东拼西凑的方案，不如考虑使用 [Bright Data 的产品](https://www.bright.cn/products)，如 Web Unlocker、Scraping Browser 或 Web Scraper API。仅需少量代码即可实现更高的成功率，同时免去对复杂技术细节的管理和维护负担。
+规避 Cloudflare 可能很复杂，而且成功率也各不相同。与其勉强拼凑解决方案，不如考虑使用 [Bright Data 的产品](https://www.bright.cn/products)，例如网络解锁器、抓取浏览器和网页爬虫工具 API。只需几行代码，你就能获得更高的成功率，而无需费心管理复杂的解决方案。
