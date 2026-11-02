@@ -161,7 +161,7 @@ response = requests.get(url, proxies=proxies)
 print(response.json())
 ```
 
-[Bright Data 的抓取浏览器](https://github.com/luminati-io/scraping-browser)通过在远程浏览器上运行你的代码来绕过 Cloudflare，该浏览器会使用多个代理解锁网站。它可与 [Puppeteer](https://www.bright.cn/products/scraping-browser/puppeteer)、[Selenium](https://www.bright.cn/products/scraping-browser/selenium) 和 [Playwright](https://www.bright.cn/products/scraping-browser/playwright) 集成，提供完整的无头浏览器体验。
+[Bright Data 的抓取浏览器](https://github.com/bright-cn/scraping-browser)通过在远程浏览器上运行你的代码来绕过 Cloudflare，该浏览器会使用多个代理解锁网站。它可与 [Puppeteer](https://www.bright.cn/products/scraping-browser/puppeteer)、[Selenium](https://www.bright.cn/products/scraping-browser/selenium) 和 [Playwright](https://www.bright.cn/products/scraping-browser/playwright) 集成，提供完整的无头浏览器体验。
 
 ## 总结
 
